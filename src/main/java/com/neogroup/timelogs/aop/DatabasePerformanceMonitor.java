@@ -14,7 +14,7 @@ public class DatabasePerformanceMonitor {
     private static final Logger logger = LoggerFactory.getLogger(DatabasePerformanceMonitor.class);
     private static final long SLOW_QUERY_THRESHOLD_MS = 500;
 
-    @Around("execution(* neogroup.task.repository..*(..))")
+    @Around("execution(* com.neogroup.timelogs.repository..*(..))")
     public Object logSlowQueries(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         try {

@@ -1,0 +1,7 @@
+#spring:
+#  datasource:
+#    properties:
+#      schema: time_log_test
+
+scheduling:
+  enabled: false

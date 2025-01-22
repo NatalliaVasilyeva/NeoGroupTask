@@ -1,0 +1,64 @@
+services:
+  app:
+    image: time-log:latest
+    build:
+      context: .
+    container_name: app
+    restart: always
+    network_mode: bridge
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://time-log/time-log
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+    depends_on:
+      - time-log
+      - redis
+
+  time-log:
+#    platform: linux/amd64
+    image: time-log-db:latest
+    command: postgres -c 'max_connections=10000'
+    container_name: time-log-db
+    ports:
+      - "5433:5432"
+    environment:
+      - "DEBUG=true"
+      - "POSTGRES_PASSWORD=postgres"
+      - "PG_TRUST_LOCALNET=true"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres && psql -lqt -U postgres | grep -qw healtcheck_db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 50
+    volumes:
+      - ./docker/docker-postgres/data-ms:/var/lib/postgresql/data
+
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - "6379:6379"
+    restart: always
+    build:
+      context: ./docker/redis
+    volumes:
+      - ./docker/redis/conf/redis.conf:/opt/redis/redis.conf
+      - ./docker/redis/data:/data
+      - ./docker/redis/logs:/logs
+    environment:
+      - REDIS_PASSWORD=password
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    command:
+      redis-server /opt/redis/redis.conf
+    networks:
+      - redis-network
+networks:
+  redis-network:
+    driver: bridge
+
+

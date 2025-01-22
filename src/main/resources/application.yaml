@@ -1,0 +1,63 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/time-log
+    username: postgres
+    password: postgres
+#    properties:
+#      schema: time_log
+    driver-class-name: org.postgresql.Driver
+    remove-abandoned: true
+    remove-abandoned-timeout: 3
+    log-abandoned: true
+    hikari:
+      connection-timeout: 30000
+      max-lifetime: 60000
+      idle-timeout: 10000
+      leak-detection-threshold: 5000
+      validation-query: SELECT 1
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        generate_statistics: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 10
+          min-idle: 1
+          time-between-eviction-runs: 600s
+  liquibase:
+    enabled: on
+    url: jdbc:postgresql://localhost:5433/time-log
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+#    default-schema: ${spring.datasource.properties.schema}
+    change-log: db/changelog/db.changelog-master.yaml
+  cache:
+    type: redis
+
+logging:
+  level:
+    org.springframework: DEBUG
+    "liquibase": info
+    org.hibernate.SQL: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  health:
+    db:
+      enabled: true

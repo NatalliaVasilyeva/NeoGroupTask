@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+ORIGINAL_DIR=$(pwd)
+echo $ORIGINAL_DIR
+
+cd ../ && docker-compose up --detach redis
+trap cd_to_original_location EXIT
+
+function cd_to_original_location()
+{
+    cd $ORIGINAL_DIR
+}

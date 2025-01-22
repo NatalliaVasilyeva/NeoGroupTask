@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: spring-boot-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:17
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_DB: testdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:6.0
+    container_name: redis-server
+    ports:
+      - "6379:6379"

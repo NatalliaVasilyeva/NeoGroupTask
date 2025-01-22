@@ -1,0 +1,2 @@
+CREATE ROLE "time-log" WITH SUPERUSER LOGIN PASSWORD 'time-log';
+CREATE DATABASE "time-log" WITH OWNER "time-log";
